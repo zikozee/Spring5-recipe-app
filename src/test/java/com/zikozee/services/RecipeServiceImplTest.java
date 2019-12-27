@@ -1,10 +1,11 @@
 package com.zikozee.services;
 
 
+import com.zikozee.commands.RecipeCommand;
 import com.zikozee.converters.RecipeCommandToRecipe;
 import com.zikozee.converters.RecipeToRecipeCommand;
-import com.zikozee.commands.RecipeCommand;
 import com.zikozee.domain.Recipe;
+import com.zikozee.exceptions.NotFoundException;
 import com.zikozee.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,15 @@ public class RecipeServiceImplTest {
         assertNotNull("Null recipe returned", recipeReturned);
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound(){
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(1L);
     }
 
     @Test
